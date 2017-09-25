@@ -1,0 +1,10 @@
+Flask
+connexion
+pymongo
+json
+pandas
+numpy
+matplotlib
+injector
+Flask-Injector
+fastavro

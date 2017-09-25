@@ -1,0 +1,110 @@
+swagger: "2.0"
+
+info:
+  title: "Rider stats service"
+  version: "1.0"
+
+
+
+schemes:
+  - http
+consumes:
+  - application/json
+
+paths:
+  /stats/:
+    get:
+      operationId: api.stats.get_stats
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Get a list of rider stats'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Item'
+
+  /store/:
+    post:
+      operationId: data.mongo.instance.store
+      parameters:
+        - name: ride
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Ride'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful store'
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 'Ride stored'
+
+  /get/{size}:
+    get:
+      operationId: data.mongo.instance.get
+      parameters:
+        - name: size
+          in: path
+          type: integer
+          required: true
+      produces:
+        - text/csv
+      responses:
+        '200':
+          description: 'Successful get'
+          schema:
+            type: file
+
+
+
+definitions:
+
+  Ride:
+   type: object
+   properties:
+     user_id:
+      type: string
+     from_lat:
+        type: number
+        format: float
+     from_long:
+        type: number
+        format: float
+     to_lat:
+        type: number
+        format: float
+     to_long:
+        type: number
+        format: float
+
+  Item:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      from:
+        $ref: '#/definitions/Coordinates'
+      to:
+        $ref: '#/definitions/Coordinates'
+
+  Coordinates:
+    type: object
+    required:
+      - lat
+      - lon
+    properties:
+      lat:
+        type: number
+        format: float
+      lon:
+        type: number
+        format: float
+
