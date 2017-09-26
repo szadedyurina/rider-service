@@ -2,15 +2,29 @@ import pandas as pd
 import numpy as np
 from math import *
 import matplotlib.pyplot as plt
+from io import BytesIO
 from pandas.io.json import json_normalize
 
 def get_stats(rides):
-    data = json_normalize(rides)
-    data['dist'] = data.apply(lambda row: get_distance(row['from_long'],
-                                                        row['from_lat'], row['to_long'], row['to_lat']), axis=1)
+    data = get_dist_data(rides)
     data.sort_values(['user_id', 'dist'], ascending=[True, False], inplace=True)
     out_data = data[['from_lat', 'from_long', 'to_lat', 'to_long', 'user_id']]
     return out_data.to_csv(index=False)
+
+def get_chart(rides):
+    data = get_dist_data(rides)
+    stats = data[['user_id', 'dist']].groupby('user_id').agg({'dist': ['count', 'mean', 'var', 'std']})
+    plt.scatter(stats['dist']['count'], stats['dist']['var'])
+    figfile = BytesIO()
+    plt.savefig(figfile, format='png')
+    figfile.seek(0)
+    return figfile.getvalue()
+
+def get_dist_data(rides):
+    data = json_normalize(rides)
+    data['dist'] = data.apply(lambda row: get_distance(row['from_long'],
+                                                       row['from_lat'], row['to_long'], row['to_lat']), axis=1)
+    return data
 
 def get_distance(lon1, lat1, lon2, lat2):
     # convert decimal degrees to radians

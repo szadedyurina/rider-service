@@ -1,7 +1,7 @@
 from pymongo import *
 import pymongo
 from bson.json_util import *
-from api.stats import get_stats
+from api.stats import get_stats, get_chart
 from injector import *
 
 db_id = 'test'
@@ -45,6 +45,7 @@ class Ride(object):
         data = ride
         ride_id = collection.insert({'user_id': data['user_id'], 'to_lat': data['to_lat'], 'to_long': data['to_long'], 'from_lat': data['from_lat'], 'from_long': data['from_long']})
         inserted_ride = collection.find_one({'_id': ride_id})
+        db.close()
         return dumps({'result': inserted_ride['user_id']}, separators=(',', ':'))
 
     # @inject(db=Database)
@@ -53,6 +54,15 @@ class Ride(object):
         collection = db[db_id][collection_id]
         output = json.loads(dumps(list(collection.find())))
         stats = get_stats(output)
+        db.close()
+        return stats
+
+    def chart(self, db:Database = None) -> json:
+        if not db: db = Database().connection()
+        collection = db[db_id][collection_id]
+        output = json.loads(dumps(list(collection.find())))
+        stats = get_chart(output)
+        db.close()
         return stats
 
 instance = Ride()

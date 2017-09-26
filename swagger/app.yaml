@@ -12,18 +12,6 @@ consumes:
   - application/json
 
 paths:
-  /stats/:
-    get:
-      operationId: api.stats.get_stats
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: 'Get a list of rider stats'
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Item'
 
   /store/:
     post:
@@ -46,7 +34,7 @@ paths:
                 type: string
                 description: 'Ride stored'
 
-  /get/{size}:
+  /stats/{size}:
     get:
       operationId: data.mongo.instance.get
       parameters:
@@ -62,6 +50,17 @@ paths:
           schema:
             type: file
 
+  /chart/:
+    get:
+      operationId: data.mongo.instance.chart
+      produces:
+        - image/png
+      responses:
+        '200':
+          description: 'Get a scatter plot with rider stats'
+          schema:
+            type: string
+            format: binary
 
 
 definitions:
