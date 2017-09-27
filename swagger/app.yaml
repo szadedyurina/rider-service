@@ -36,7 +36,7 @@ paths:
 
   /stats/{size}:
     get:
-      operationId: data.mongo.instance.get
+      operationId: data.mongo.instance.get_stats
       parameters:
         - name: size
           in: path
@@ -49,6 +49,24 @@ paths:
           description: 'Successful get'
           schema:
             type: file
+
+  /get/{size}:
+    get:
+      operationId: data.mongo.instance.get
+      parameters:
+        - name: size
+          in: path
+          type: integer
+          required: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful get'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Ride'
 
   /chart/:
     get:
@@ -67,32 +85,32 @@ definitions:
 
   Ride:
    type: object
+   required:
+      - user_id
+      - from_lat
+      - from_lon
+      - to_lat
+      - to_lon
    properties:
      user_id:
-      type: string
+       type: string
      from_lat:
-        type: number
-        format: float
-     from_long:
-        type: number
-        format: float
+       type: number
+       format: float
+     from_lon:
+       type: number
+       format: float
      to_lat:
-        type: number
-        format: float
-     to_long:
-        type: number
-        format: float
+       type: number
+       format: float
+     to_lon:
+       type: number
+       format: float
 
-  Item:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      from:
-        $ref: '#/definitions/Coordinates'
-      to:
-        $ref: '#/definitions/Coordinates'
+#     from:
+#       $ref: '#/definitions/Coordinates'
+#     to:
+#       $ref: '#/definitions/Coordinates'
 
   Coordinates:
     type: object
