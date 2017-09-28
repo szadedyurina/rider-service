@@ -1,9 +1,6 @@
 import connexion
 from connexion.resolver import RestyResolver
 from injector import Binder
-from flask_injector import FlaskInjector
-from flask import request
-import json
 
 # def configure(binder: Binder) -> Binder:
 #     binder.bind(
