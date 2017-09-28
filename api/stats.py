@@ -1,6 +1,5 @@
-import pandas as pd
-import numpy as np
 from math import *
+import numpy as np
 import matplotlib.pyplot as plt
 from io import BytesIO
 from pandas.io.json import json_normalize
@@ -9,13 +8,15 @@ from data.mongo import MongoProvider, Database
 database = Database(5, MongoProvider())
 
 
-def get(size: int):
+def get(size: int = None):
     return database.get(size)
+
 
 def store(ride):
     return database.store(ride)
 
-def get_stats(size: int):
+
+def get_stats(size: int = None):
     rides = database.get(size)
     data = get_dist_data(rides)
     data.sort_values(['user_id', 'dist'], ascending=[True, False], inplace=True)
@@ -23,11 +24,17 @@ def get_stats(size: int):
     return out_data.to_csv(index=False)
 
 
-def get_chart(size: int):
+def get_chart(size: int=None):
     rides = database.get(size)
     data = get_dist_data(rides)
-    stats = data[['user_id', 'dist']].groupby('user_id').agg({'dist': ['count', 'mean', 'var', 'std']})
-    plt.scatter(stats['dist']['count'], stats['dist']['var'])
+    stats = data[['user_id', 'dist']].groupby('user_id').agg({'dist':[np.var, np.mean, np.std, np.size]})
+    stats.columns = ["_".join(x) for x in stats.columns.ravel()]
+    for index, row in (stats[['dist_size', 'dist_var']].iterrows()):
+        plt.scatter(row[0], row[1], label=index)
+    plt.legend(loc="best")
+    plt.xlabel("Rides Count")
+    plt.ylabel("Rides Variance")
+    plt.title("Rides Statistics")
     figfile = BytesIO()
     plt.savefig(figfile, format='png')
     figfile.seek(0)
