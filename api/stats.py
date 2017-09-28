@@ -4,8 +4,13 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 from pandas.io.json import json_normalize
 from data.mongo import MongoProvider, Database
+import configparser
 
-database = Database(5, MongoProvider())
+config = configparser.ConfigParser()
+config.read('appconfig.ini')
+
+coll_limit = config['Mongo']['Limit']
+database = Database(coll_limit, MongoProvider())
 
 
 def get(size: int = None):
@@ -24,10 +29,10 @@ def get_stats(size: int = None):
     return out_data.to_csv(index=False)
 
 
-def get_chart(size: int=None):
+def get_chart(size: int = None):
     rides = database.get(size)
     data = get_dist_data(rides)
-    stats = data[['user_id', 'dist']].groupby('user_id').agg({'dist':[np.var, np.mean, np.std, np.size]})
+    stats = data[['user_id', 'dist']].groupby('user_id').agg({'dist': [np.var, np.mean, np.std, np.size]})
     stats.columns = ["_".join(x) for x in stats.columns.ravel()]
     for index, row in (stats[['dist_size', 'dist_var']].iterrows()):
         plt.scatter(row[0], row[1], label=index)

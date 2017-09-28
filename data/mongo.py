@@ -2,9 +2,14 @@ from pymongo import *
 from pymongo.collection import *
 import pymongo
 from bson.json_util import *
+import configparser
 
-db_id = 'test'
-collection_id = 'Rides'
+config = configparser.ConfigParser()
+config.read('appconfig.ini')
+
+# get db and collection names
+db_id = config['Mongo']['db_id']
+collection_id = config['Mongo']['collection_id']
 
 
 class MongoProvider(object):
@@ -22,12 +27,9 @@ class Database(object):
     def __init__(
             self,
             limit: int,
-            mongo_provider: MongoProvider = None
+            provider: MongoProvider = None
     ):
-        if not MongoProvider:
-            self.mongo_provider = MongoProvider()
-        else:
-            self.mongo_provider = mongo_provider
+        self.mongo_provider = provider or MongoProvider()
         self.instance = None
         self.limit = limit
 
@@ -66,8 +68,8 @@ class Database(object):
 
     def get(self, size: int) -> json:
         coll = self.collection
-        if not size:
-            output = json.loads(dumps(list(coll.find())))
-        else:
+        if size:
             output = json.loads(dumps(list(coll.find({}, {'rides': {'$slice': -size}}))))
+        else:
+            output = json.loads(dumps(list(coll.find())))
         return output
