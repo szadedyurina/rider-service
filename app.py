@@ -3,7 +3,6 @@ from connexion.resolver import RestyResolver
 from injector import Binder
 from flask_injector import FlaskInjector
 from flask import request
-from data.mongo import Database, MongoProvider, Ride
 import json
 
 # def configure(binder: Binder) -> Binder:
@@ -20,7 +19,7 @@ import json
 
 if __name__ == '__main__':
     app = connexion.App(__name__, specification_dir='swagger/')
-    app.add_api('app.yaml', resolver=RestyResolver('data'))
+    app.add_api('app.yaml', resolver=RestyResolver('api'))
     # FlaskInjector(app=app.app, modules=[configure])
     app.run(port=9090)
 

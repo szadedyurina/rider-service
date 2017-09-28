@@ -15,7 +15,7 @@ paths:
 
   /store/:
     post:
-      operationId: data.mongo.instance.store
+      operationId: api.stats.store
       parameters:
         - name: ride
           in: body
@@ -26,51 +26,59 @@ paths:
         - application/json
       responses:
         '200':
-          description: 'Successful store'
+          description: 'Successful ride information store.'
           schema:
             type: object
             properties:
               message:
                 type: string
-                description: 'Ride stored'
+                description: 'Ride stored.'
 
   /stats/{size}:
     get:
-      operationId: data.mongo.instance.get_stats
+      operationId: api.stats.get_stats
       parameters:
         - name: size
           in: path
           type: integer
           required: true
+          description: 'Number of rides per each rider to return.'
       produces:
         - text/csv
       responses:
         '200':
-          description: 'Successful get'
+          description: 'Successful ride statistics get.'
           schema:
             type: file
 
   /get/{size}:
     get:
-      operationId: data.mongo.instance.get
+      operationId: api.stats.get
       parameters:
         - name: size
           in: path
           type: integer
           required: true
+          description: 'Number of rides per each rider to return.'
       produces:
         - application/json
       responses:
         '200':
-          description: 'Successful get'
+          description: 'Successful rides information get.'
           schema:
             type: array
             items:
               $ref: '#/definitions/Ride'
 
-  /chart/:
+  /chart/{size}:
     get:
-      operationId: data.mongo.instance.chart
+      operationId: api.stats.get_chart
+      parameters:
+        - name: size
+          in: path
+          type: integer
+          required: true
+          description: 'Number of rides per each rider to return.'
       produces:
         - image/png
       responses:

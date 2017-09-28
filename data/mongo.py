@@ -1,7 +1,7 @@
 from pymongo import *
+from pymongo.collection import *
 import pymongo
 from bson.json_util import *
-from api.stats import get_stats, get_chart
 from injector import *
 
 db_id = 'test'
@@ -20,14 +20,18 @@ class MongoProvider(object):
 
 
 class Database(object):
+
     def __init__(
             self,
-            mongo_provider: MongoProvider = None,
-            limit: int = 5
+            limit: int,
+            mongo_provider: MongoProvider = None
     ):
-        self.mongo_provider = MongoProvider()
-        self.limit = limit
+        if not MongoProvider: self.mongo_provider = MongoProvider()
+        else: self.mongo_provider = mongo_provider
         self.instance = None
+        self.db = None
+        self.collection = None
+        self.limit = limit
 
     def connection(self) -> MongoClient:
         if not self.instance:
@@ -35,14 +39,13 @@ class Database(object):
             self.instance[db_id][collection_id].create_index([('user_id', pymongo.ASCENDING)])
         return self.instance
 
+    def get_collection(self)-> Collection:
+        connection = self.connection()
+        return connection[db_id][collection_id]
 
-class Ride(object):
-    # @inject(db=Database, limit=3)
-    def store(self, ride, db: Database = None) -> json:
-        if not db:
-            db = Database()
-            connection = db.connection()
-        collection = connection[db_id][collection_id]
+
+    def store(self, ride) -> json:
+        collection = self.get_collection()
         # update rider document with new ride if the document exists or create new document and add first ride otherwise
         rider_coll = collection.find_one_and_update(
             {'user_id': ride['user_id']},
@@ -55,35 +58,15 @@ class Ride(object):
             return_document=ReturnDocument.AFTER)
 
         # check if the rides limit exceeded and drop the first (chronologically) ride if so
-        if rider_coll['count'] > db.limit:
+        if rider_coll['count'] > self.limit:
             collection.update_one(
                 {'user_id': ride['user_id']},
                 {'$inc': {'count': -1},
                  '$pop': {'rides': -1}})
         inserted_doc = collection.find_one({'user_id': ride['user_id']}, {'rides': {'$slice': -1}})
-        connection.close()
         return json.loads(dumps({'Updated rider': inserted_doc}))
 
-    # @inject(db=Database)
-    def get(self, size: int, db: Database = None) -> json:
-        if not db: db = Database().connection()
-        collection = db[db_id][collection_id]
+    def get(self, size: int) -> json:
+        collection = self.get_collection()
         output = json.loads(dumps(list(collection.find({}, {'rides': {'$slice': -size}}))))
-        db.close()
         return output
-
-    def get_stats(self, size: int, db: Database = None):
-        output = self.get(size, db)
-        stats = get_stats(output)
-        return stats
-
-    def chart(self, db: Database = None):
-        if not db: db = Database().connection()
-        collection = db[db_id][collection_id]
-        output = json.loads(dumps(list(collection.find())))
-        stats = get_chart(output)
-        db.close()
-        return stats
-
-
-instance = Ride()
