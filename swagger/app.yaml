@@ -13,13 +13,14 @@ consumes:
 
 paths:
 
-  /store/:
+  /store:
     post:
       operationId: api.stats.store
       parameters:
         - name: ride
           in: body
           required: true
+          description: 'Ride to be stored.'
           schema:
             $ref: '#/definitions/Ride'
       produces:
@@ -34,15 +35,14 @@ paths:
                 type: string
                 description: 'Ride stored.'
 
-  /stats/{size}:
+  /stats:
     get:
       operationId: api.stats.get_stats
       parameters:
         - name: size
-          in: path
+          in: query
           type: integer
-          required: true
-          description: 'Number of rides per each rider to return.'
+          description: 'Number of rides per each rider to return. All available rides are returned if not set.'
       produces:
         - text/csv
       responses:
@@ -51,39 +51,36 @@ paths:
           schema:
             type: file
 
-  /get/{size}:
+  /get:
     get:
       operationId: api.stats.get
       parameters:
         - name: size
-          in: path
+          in: query
           type: integer
-          required: true
-          description: 'Number of rides per each rider to return.'
+          description: 'Number of rides per each rider to return. All available rides are returned if not set.'
       produces:
         - application/json
       responses:
         '200':
           description: 'Successful rides information get.'
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/Ride'
+            type: object
 
-  /chart/{size}:
+  /chart:
     get:
       operationId: api.stats.get_chart
       parameters:
         - name: size
-          in: path
+          in: query
           type: integer
-          required: true
-          description: 'Number of rides per each rider to return.'
+          required: false
+          description: 'Number of rides per each rider to be plotted. All available rides are used if not set.'
       produces:
         - image/png
       responses:
         '200':
-          description: 'Get a scatter plot with rider stats'
+          description: 'Successfully retrieved scatter plot with rider stats.'
           schema:
             type: string
             format: binary
