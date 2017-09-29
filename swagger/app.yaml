@@ -14,6 +14,7 @@ paths:
 
   /store:
     post:
+      summary: Stores ride information to the database.
       operationId: app.instance.store
       parameters:
         - name: ride
@@ -36,6 +37,7 @@ paths:
 
   /stats:
     get:
+      summary: Returns csv with information on {size} last riders' rides sorted by Euclidian distance.
       operationId: app.instance.get_stats
       parameters:
         - name: size
@@ -52,6 +54,7 @@ paths:
 
   /get:
     get:
+      summary: Returns information on {size} last riders rides serialized in json.
       operationId: app.instance.get
       parameters:
         - name: size
@@ -68,6 +71,7 @@ paths:
 
   /chart:
     get:
+      summary: Returns scatter plot with X - rides count and Y - ride distance variance for each rider.
       operationId: app.instance.get_chart
       parameters:
         - name: size
