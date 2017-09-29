@@ -1,5 +1,5 @@
 from unittest import TestCase
-from RiderStatsApp.api.stats import Stats
+from ..api.stats import Stats
 
 class TestDistance(TestCase):
 
