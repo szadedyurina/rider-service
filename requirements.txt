@@ -1,8 +1,5 @@
 connexion
 pymongo
-json
 pandas
 numpy
-io
 matplotlib
-injector

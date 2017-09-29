@@ -1,7 +1,7 @@
 import connexion
 from connexion.resolver import RestyResolver
-from RiderStatsApp.data.mongo import MongoProvider, Database
-from RiderStatsApp.api.stats import Stats
+from data.mongo import MongoProvider, Database
+from api.stats import Stats
 import configparser
 
 # get database name, collection name
