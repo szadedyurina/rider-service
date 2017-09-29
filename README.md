@@ -10,7 +10,7 @@ The following solutions are used within the service:
 
 ## API description
 
-Below one can find the API description however full API specification is available in {base_path}/ui/ path providing Swagger Console UI
+Below one can find the API description however full API specification is available in [http://localhost:9090/ui/](http://localhost:9090/ui/) path providing Swagger Console UI
 
 URI | METHOD | Description
 --- | ------ | -----------
