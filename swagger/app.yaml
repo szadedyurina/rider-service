@@ -5,7 +5,6 @@ info:
   version: "1.0"
 
 
-
 schemes:
   - http
 consumes:
@@ -15,7 +14,7 @@ paths:
 
   /store:
     post:
-      operationId: api.stats.store
+      operationId: app.instance.store
       parameters:
         - name: ride
           in: body
@@ -37,7 +36,7 @@ paths:
 
   /stats:
     get:
-      operationId: api.stats.get_stats
+      operationId: app.instance.get_stats
       parameters:
         - name: size
           in: query
@@ -53,7 +52,7 @@ paths:
 
   /get:
     get:
-      operationId: api.stats.get
+      operationId: app.instance.get
       parameters:
         - name: size
           in: query
@@ -69,7 +68,7 @@ paths:
 
   /chart:
     get:
-      operationId: api.stats.get_chart
+      operationId: app.instance.get_chart
       parameters:
         - name: size
           in: query

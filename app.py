@@ -1,23 +1,24 @@
 import connexion
 from connexion.resolver import RestyResolver
-from injector import Binder
+from RiderStatsApp.data.mongo import MongoProvider, Database
+from RiderStatsApp.api.stats import Stats
+import configparser
 
-# def configure(binder: Binder) -> Binder:
-#     binder.bind(
-#         Database,
-#         Database(
-#             MongoProvider("http://0.0.0.0", 27017
-#             )
-#         )
-#     )
-#
-#     return binder
+# get database name, collection name
+config = configparser.ConfigParser()
+config.read('appconfig.ini')
 
+coll_limit = config['Mongo']['Limit']
+db_id = config['Mongo']['db_id']
+collection_id = config['Mongo']['collection_id']
+
+# instantiate Stats object
+database = Database(coll_limit, db_id, collection_id, MongoProvider())
+instance = Stats(database)
 
 if __name__ == '__main__':
     app = connexion.App(__name__, specification_dir='swagger/')
-    app.add_api('app.yaml', resolver=RestyResolver('api'))
-    # FlaskInjector(app=app.app, modules=[configure])
+    app.add_api('app.yaml')
     app.run(port=9090)
 
 

@@ -2,14 +2,6 @@ from pymongo import *
 from pymongo.collection import *
 import pymongo
 from bson.json_util import *
-import configparser
-
-config = configparser.ConfigParser()
-config.read('appconfig.ini')
-
-# get db and collection names
-db_id = config['Mongo']['db_id']
-collection_id = config['Mongo']['collection_id']
 
 
 class MongoProvider(object):
@@ -27,22 +19,26 @@ class Database(object):
     def __init__(
             self,
             limit: int,
+            db_id: str,
+            collection_id: str,
             provider: MongoProvider = None
     ):
         self.mongo_provider = provider or MongoProvider()
-        self.instance = None
         self.limit = limit
-
-    def connection(self) -> MongoClient:
-        if not self.instance:
-            self.instance = self.mongo_provider.create()
-            self.instance[db_id][collection_id].create_index([('user_id', pymongo.ASCENDING)])
-        return self.instance
+        self.db_id = db_id
+        self.collection_id = collection_id
+        self.instance = None
 
     @property
     def collection(self) -> Collection:
         connection = self.connection()
-        return connection[db_id][collection_id]
+        return connection[self.db_id][self.collection_id]
+
+    def connection(self) -> MongoClient:
+        if not self.instance:
+            self.instance = self.mongo_provider.create()
+            self.instance[self.db_id][self.collection_id].create_index([('user_id', pymongo.ASCENDING)])
+        return self.instance
 
     def store(self, ride) -> json:
         coll = self.collection
