@@ -28,7 +28,7 @@ In order to get the service up and running the following steps should be perform
 $ git clone https://github.com/zvezdysima/rider-service/
 ```
 
-2. Run Mongo (from \data\db\ directory)
+2. Run Mongo - ensure \data\db\ directory is created first
 ```
 $ mongod
 ```
@@ -39,4 +39,11 @@ $ pip install -r requirements.txt
 4. Run service 
 ```
 $ python app.py
+```
+
+Alternative way is to run docker image:
+```
+docker build -t rider-service ./
+
+docker run -it --rm -p 9090:9090 --name rider-service rider-service
 ```
