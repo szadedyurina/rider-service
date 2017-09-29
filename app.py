@@ -8,7 +8,7 @@ import configparser
 config = configparser.ConfigParser()
 config.read('appconfig.ini')
 
-coll_limit = config['Mongo']['Limit']
+coll_limit = int(config['Mongo']['Limit'])
 db_id = config['Mongo']['db_id']
 collection_id = config['Mongo']['collection_id']
 
