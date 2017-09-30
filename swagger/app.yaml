@@ -15,7 +15,7 @@ paths:
   /store:
     post:
       summary: Stores ride information to the database.
-      operationId: app.instance.store
+      operationId: app.store
       parameters:
         - name: ride
           in: body
@@ -26,19 +26,23 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
-          description: 'Successful ride information store.'
+        '201':
+          description: 'Successfully stored ride information.'
           schema:
             type: object
             properties:
               message:
                 type: string
                 description: 'Ride stored.'
+        '400':
+          description: Bad request. Pleae check input ride data.
+        '500':
+          description: Unexpected error.
 
   /stats:
     get:
       summary: Returns csv with information on {size} last riders' rides sorted by Euclidian distance.
-      operationId: app.instance.get_stats
+      operationId: app.get_stats
       parameters:
         - name: size
           in: query
@@ -48,14 +52,18 @@ paths:
         - text/csv
       responses:
         '200':
-          description: 'Successful ride statistics get.'
+          description: 'Successfully returned ride statistics.'
           schema:
             type: file
+        '404':
+          description: No rides data found in database.
+        '500':
+          description: Unexpected error.
 
   /get:
     get:
       summary: Returns information on {size} last riders rides serialized in json.
-      operationId: app.instance.get
+      operationId: app.get
       parameters:
         - name: size
           in: query
@@ -65,14 +73,16 @@ paths:
         - application/json
       responses:
         '200':
-          description: 'Successful rides information get.'
+          description: 'Successfully returned rides information.'
           schema:
             type: object
+        '404':
+          description: No rides data found in database.
 
   /chart:
     get:
       summary: Returns scatter plot with X - rides count and Y - ride distance variance for each rider.
-      operationId: app.instance.get_chart
+      operationId: app.get_chart
       parameters:
         - name: size
           in: query
@@ -87,6 +97,10 @@ paths:
           schema:
             type: string
             format: binary
+        '404':
+          description: No rides data found in database.
+        '500':
+          description: Unexpected error.
 
 
 definitions:

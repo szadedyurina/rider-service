@@ -6,46 +6,26 @@ from pandas.io.json import json_normalize
 
 
 class Stats(object):
-    def __init__(self, db):
-        self.database = db
 
-    def get(self, size: int = None):
-        """
-        Operation corresponding to /get endpoint, GET request
-        :param size: optional number of rides (last) for each rider, if not set all available rides are returned
-        :return: each rider's rides serialized in json
-        """
-        return self.database.get(size)
-
-    def store(self, ride):
-        """
-        Operation corresponding to /store endpoint, POST request
-        :param ride: json with ride to be stored
-        :return: added ride serialized in json
-        """
-        return self.database.store(ride)
-
-    def get_stats(self, size: int = None):
+    def get_stats(self, rides):
         """
         Operation corresponding to /stats endpoint, GET request
-        :param size: optional number of rides (last) for each rider, if not set all available rides are returned
+        :param rides: each rider's rides serialized in json
         :return: csv file with rides grouped by user_id and sorted in descending by
         Euclidian distance of each ride calculated using Haversine formula
         """
-        rides = self.database.get(size)
         data = self.calc_dist_data(rides)
         data.sort_values(['user_id', 'dist'], ascending=[True, False], inplace=True)
         out_data = data[['from_lat', 'from_lon', 'to_lat', 'to_lon', 'user_id']]
         return out_data.to_csv(index=False)
 
-    def get_chart(self, size: int = None):
+    def get_chart(self, rides):
         """
         Operation corresponding to /chart endpoint, GET request
-        :param size: optional number of rides (last) for each rider, if not set all available rides are used
+        :param rides: each rider's rides serialized in json
         :return: scatter plot, each point describing single rider with X - total rides number (<= size)
         and Y - variance of rides distances
         """
-        rides = self.database.get(size)
         data = self.calc_dist_data(rides)
         stats = self.calc_stats(data)
         chart = self.create_chart(stats)
