@@ -12,9 +12,11 @@ config.read('appconfig.ini')
 coll_limit = int(config['Mongo']['Limit'])
 db_id = config['Mongo']['db_id']
 collection_id = config['Mongo']['collection_id']
+mongo_host = config['Mongo']['Host']
+mongo_port = int(config['Mongo']['Port'])
 
 # instantiate Database and Stats objects
-database = Database(coll_limit, db_id, collection_id, MongoProvider())
+database = Database(coll_limit, db_id, collection_id, MongoProvider(mongo_host, mongo_port))
 instance = Stats()
 
 
