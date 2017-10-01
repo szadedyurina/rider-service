@@ -1,5 +1,7 @@
 from math import *
 import numpy as np
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 from io import BytesIO
 from pandas.io.json import json_normalize
