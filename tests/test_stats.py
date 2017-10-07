@@ -12,8 +12,7 @@ class TestDistance(TestCase):
     symmentry_values = ((0.0, 0.0, 1.0, 1.0),
                         (1.0, 1.0, 0.0, 0.0))
 
-    identity_values = ((1.0, 1.0, 1.0, 1.0),
-                       (1.0, 1.0, 1.0, 1.0))
+    identity_values = {(1.0, 1.0, 1.0, 1.0): 0.0}
 
     subadditivity_values = ((0.0, 0.0, 0.0, 2.0),
                             (0.0, 2.0, 2.0, 2.0),
@@ -25,24 +24,33 @@ class TestDistance(TestCase):
         for key, value in self.check_values.items():
             self.assertAlmostEqual(Stats.get_distance(key[0], key[1], key[2], key[3]), value, delta=0.1)
 
-    def distance_symmetry_test(self):
+    def test_distance_symmetry(self):
         """
         Symmetry property test: dist(a,b) = dist(b,a)
         """
-        self.assertEqual(Stats.get_distance(self.symmentry_values[0]), self.symmentry_values[1])
+        coord1 = self.symmentry_values[0]
+        coord2 = self.symmentry_values[1]
+        self.assertEqual(Stats.get_distance(coord1[0], coord1[1], coord1[2], coord1[3]),
+                         Stats.get_distance(coord2[0], coord2[1], coord2[2], coord2[3]))
 
-    def identity_test(self):
+    def test_identity(self):
         """
         Identity property test: dist(a,a)=0
         """
-        self.assertEqual(Stats.get_distance(self.identity_values[0], self.identity_values[1]))
+        for key, value in self.identity_values.items():
+            self.assertEqual(Stats.get_distance(key[0], key[1], key[2], key[3]), value)
 
-    def subadditivity_test(self):
+
+    def test_subadditivity(self):
         """
         Subadditivity (triangle inequality) test
         """
-        self.assertGreater(Stats.get_distance(self.subadditivity_values[2],
-                                              self.subadditivity_values[0] + self.subadditivity_values[1]))
+        coord1 = self.subadditivity_values[0]
+        coord2 = self.subadditivity_values[1]
+        coord3 = self.subadditivity_values[2]
+        self.assertLess(Stats.get_distance(coord3[0], coord3[1], coord3[2], coord3[3]),
+                           Stats.get_distance(coord1[0], coord1[1], coord1[2], coord1[3])
+                           + Stats.get_distance(coord2[0], coord2[1], coord2[2], coord2[3]))
 
 
 if __name__ == '__main__':
